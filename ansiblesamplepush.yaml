@@ -1,0 +1,30 @@
+--- #Playbook for testing ansible on all nodes
+ - hosts: all
+   remote_user: ansible
+   become: yes
+   tasks:
+   - name: Installing Apache on all nodes
+     yum:
+       name: httpd
+       state: latest
+   - name: To Restart the Apache service
+     service:
+       name: httpd
+       state: restarted
+   - name: To create a file 
+     file:
+       state: touch
+       dest: /var/www/html
+   - name: To copy the file content
+     copy:
+       content: Welcome to the first website hosted by playbook on localhost.
+       dest: /var/www/html/index.html
+   - name: To restart the firewall service
+     firewalld:
+       service: http
+       permanent: true
+       state: enabled
+   - name: To reload the firewall service
+     service:
+       name: firewalld
+       state: restarted
